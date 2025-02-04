@@ -4,48 +4,31 @@ import { lazy } from 'react';
 import Loadable from 'components/Loadable';
 import Dashboard from 'layout/Dashboard';
 
-const Color = Loadable(lazy(() => import('pages/component-overview/color')));
-const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
-const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/index')));
+const ProjectsDefault = Loadable(lazy(() => import('pages/projects/index')));
+const ReportsDefault = Loadable(lazy(() => import('pages/reports/index')));
+const TeamsDefault = Loadable(lazy(() => import('pages/teams/index')));
 
-// render - sample page
-const SamplePage = Loadable(lazy(() => import('pages/extra-pages/sample-page')));
-
-// ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
   path: '/',
   element: <Dashboard />,
   children: [
     {
-      path: '/',
+      path: '/home',
       element: <DashboardDefault />
     },
     {
-      path: 'color',
-      element: <Color />
+      path: 'projects',
+      element: <ProjectsDefault />
     },
     {
-      path: 'dashboard',
-      children: [
-        {
-          path: 'default',
-          element: <DashboardDefault />
-        }
-      ]
+      path: 'reports',
+      element: <ReportsDefault />
     },
     {
-      path: 'sample-page',
-      element: <SamplePage />
-    },
-    {
-      path: 'shadow',
-      element: <Shadow />
-    },
-    {
-      path: 'typography',
-      element: <Typography />
+      path: 'teams',
+      element: <TeamsDefault />
     }
   ]
 };
