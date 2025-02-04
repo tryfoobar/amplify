@@ -15,12 +15,6 @@ const Logo = () => {
   const theme = useTheme();
 
   return (
-    /**
-     * if you want to use image instead of svg uncomment following, and comment out <svg> element.
-     *
-     * <img src={logo} alt="Mantis" width="100" />
-     *
-     */
     <svg width="151px" height="29px" viewBox="0 0 151 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
           <g id="Artboard" transform="translate(-275.000000, -271.000000)" fill-rule="nonzero">
