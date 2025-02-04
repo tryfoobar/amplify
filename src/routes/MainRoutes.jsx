@@ -15,6 +15,10 @@ const MainRoutes = {
   element: <Dashboard />,
   children: [
     {
+      path: '/',
+      element: <DashboardDefault />
+    },
+    {
       path: '/home',
       element: <DashboardDefault />
     },
