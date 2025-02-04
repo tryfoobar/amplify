@@ -12,17 +12,34 @@ import {
 } from '@mui/material';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { useEffect } from 'react';
+import * as amplitude from '@amplitude/analytics-browser';
 
 // project import
 import MainCard from 'components/MainCard';
 
 // assets
 import avatar from 'assets/images/users/avatar-group.png';
-import AnimateButton from 'components/@extended/AnimateButton';
 
 // ==============================|| DRAWER CONTENT - NAVIGATION CARD ||============================== //
 
 export default function NavCard() {
+
+  useEffect(() => {
+    // Component did mount
+    console.log('NavCard mounted');
+
+    let url = 'https://gs.amplitude.com';
+    amplitude.add(window.engagement.plugin({ serverUrl: url }));
+    amplitude.init('412b587e95de8b568e53d727a1964b2', 'nino@commandbar.com', { "autocapture": true });
+    amplitude.track('Amplify: Page Viewed');
+
+    return () => {
+      // Component will unmount
+      console.log('NavCard unmounted');
+    };
+  }, []);
+
   return (
     <MainCard sx={{ bgcolor: 'grey.50', m: 3 }}>
       <Stack alignItems="center" spacing={2.5}>

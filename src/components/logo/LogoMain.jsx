@@ -15,9 +15,9 @@ const Logo = () => {
   const theme = useTheme();
 
   return (
-    <svg width="151px" height="29px" viewBox="0 0 151 29" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-      <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-          <g id="Artboard" transform="translate(-275.000000, -271.000000)" fill-rule="nonzero">
+    <svg width="151px" height="29px" viewBox="0 0 151 29" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+          <g id="Artboard" transform="translate(-275.000000, -271.000000)" fillRule="nonzero">
               <g id="Group" transform="translate(275.000000, 271.000000)">
                   <g id="Amplify" transform="translate(36.025332, 0.000000)" fill="#000000">
                       <path d="M5.59390863,22.9434373 L0,22.9434373 L7.2657723,1.40899202 L14.1950689,1.40899202 L21.4608412,22.9434373 L15.8669326,22.9434373 L10.8092821,6.8346628 L10.6410442,6.8346628 L5.59390863,22.9434373 Z M4.84735315,14.4684554 L16.539884,14.4684554 L16.539884,18.422045 L4.84735315,18.422045 L4.84735315,14.4684554 Z" id="Shape"></path>
