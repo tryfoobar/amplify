@@ -14,6 +14,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useEffect } from 'react';
 import * as amplitude from '@amplitude/analytics-browser';
+import { useNavigate } from 'react-router-dom';
 
 // project import
 import MainCard from 'components/MainCard';
@@ -21,9 +22,11 @@ import MainCard from 'components/MainCard';
 // assets
 import avatar from 'assets/images/users/avatar-group.png';
 
-// ==============================|| DRAWER CONTENT - NAVIGATION CARD ||============================== //
+
 
 export default function NavCard() {
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     // Component did mount
@@ -31,8 +34,38 @@ export default function NavCard() {
 
     let url = 'https://gs.amplitude.com';
     amplitude.add(window.engagement.plugin({ serverUrl: url }));
-    amplitude.init('412b587e95de8b568e53d727a1964b2', 'nino@commandbar.com', { "autocapture": true });
+    amplitude.init('412b587e95de8b568e53d727a1964b2', 'nino@commandbar.com',{ "autocapture": true });
     amplitude.track('Amplify: Page Viewed');
+
+    window.engagement.boot({
+      user: {
+        user_id: 'ninooooonin',
+        device_id: '60201901-fbfa-4cd9-a0c0-5dd67d17aab9',
+        user_properties: {
+          email: 'nino+amplitude@commandbar.com'
+        }
+      },
+      integrations: [
+      {
+        track: (event) => {
+          console.log(event)
+          window.engagement.trigger(event);
+        }
+      }
+      ]
+    });
+
+    const identifyEvent = new amplitude.Identify();
+    identifyEvent.set('isActive', 'true');
+    amplitude.identify(identifyEvent);
+    
+    window.engagement.setRouter((newUrl) => navigate(newUrl));
+
+    // window.engagement.addIntegration({
+    //   track: (event) => {
+    //     // window.engagement.trigger(event);
+    //   }
+    // })
 
     return () => {
       // Component will unmount
