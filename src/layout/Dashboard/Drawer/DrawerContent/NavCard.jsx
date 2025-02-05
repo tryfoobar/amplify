@@ -1,7 +1,6 @@
 import {
   Button,
   CardMedia,
-  Link,
   Stack,
   Typography,
   OutlinedInput,
@@ -51,36 +50,70 @@ export default function NavCard() {
   useEffect(() => {
     // Component did mount
 
-    let url = 'https://gs.amplitude.com';
-    amplitude.add(window.engagement.plugin({ serverUrl: url }));
+    const analyticsHost = localSDK === 'staging' ? 'https://api.stag2.amplitude.com/2/httpapi' : undefined;
+    let decideHost = 'https://gs.amplitude.com';
+    if (activeAPI === 'local') {
+      decideHost = 'http://localhost:10001';
+    } else if (activeAPI === 'staging') {
+      decideHost = 'https://gs.stag2.amplitude.com';
+    } else if (activeAPI === 'prod-eu') {
+      decideHost = 'https://gs.eu.amplitude.com';
+    }
 
-    // Engagement QA - G&S Plus
-    amplitude.init('460416694432445836f367cb4fb5c6ea', 'nino@commandbar.com',{ "autocapture": true });
-    amplitude.track('Amplify: Page Viewed');
-
-    window.engagement.boot({
-      user: {
-        user_id: 'ninooooonin',
-        device_id: '60201901-fbfa-4cd9-a0c0-5dd67d17aab9',
-        user_properties: {
-          email: 'nino+amplitude@commandbar.com'
-        }
-      },
-      integrations: [
-      {
-        track: (event) => {
-          console.log(event)
-          window.engagement.trigger(event);
-        }
-      }
-      ]
-    });
-
-    const identifyEvent = new amplitude.Identify();
-    identifyEvent.set('isActive', 'true');
-    amplitude.identify(identifyEvent);
+    const activeAPIKey = activeAPI === 'local' ? localKey : stagingKey;
     
-    window.engagement.setRouter((newUrl) => navigate(newUrl));
+    console.log('Active API Key:', activeAPI);
+    console.log('activeAPIKey API Key:', activeAPIKey);
+
+    if (localSDK === 'none') {
+      window.engagement.init(activeAPIKey, { serverUrl: decideHost, options: { logLevel: 4 } });
+      window.engagement.boot({
+        user: {
+          user_id: userSlug,
+          device_id: '60201901-fbfa-4cd9-a0c0-5dd67d17aab9',
+          // user_properties: { foo: 'bar' }
+        }
+      });
+    } else if (localSDK === 'amplitude') {
+      amplitude.add(window.engagement.plugin({ serverUrl: decideHost }));
+      // amplitude.add((window.engagement as ProxySDK).plugin({ serverUrl: decideHost }));
+      amplitude.init(activeAPIKey, userSlug, { serverUrl: analyticsHost, logLevel: 4 });
+      const identifyEvent = new amplitude.Identify();
+      identifyEvent.set('foo', 'bar');
+      amplitude.identify(identifyEvent);
+    }
+        
+
+    // let url = 'https://gs.amplitude.com';
+    // amplitude.add(window.engagement.plugin({ serverUrl: url }));
+
+    // // Engagement QA - G&S Plus
+    // amplitude.init('460416694432445836f367cb4fb5c6ea', 'nino@commandbar.com',{ "autocapture": true });
+    // amplitude.track('Amplify: Page Viewed');
+
+    // window.engagement.boot({
+    //   user: {
+    //     user_id: 'ninooooonin',
+    //     device_id: '60201901-fbfa-4cd9-a0c0-5dd67d17aab9',
+    //     user_properties: {
+    //       email: 'nino+amplitude@commandbar.com'
+    //     }
+    //   },
+    //   integrations: [
+    //   {
+    //     track: (event) => {
+    //       console.log(event)
+    //       window.engagement.trigger(event);
+    //     }
+    //   }
+    //   ]
+    // });
+
+    // const identifyEvent = new amplitude.Identify();
+    // identifyEvent.set('isActive', 'true');
+    // amplitude.identify(identifyEvent);
+    
+    // window.engagement.setRouter((newUrl) => navigate(newUrl));
 
     // window.engagement.addIntegration({
     //   track: (event) => {
@@ -130,7 +163,7 @@ export default function NavCard() {
   return (
     <MainCard sx={{ bgcolor: 'grey.50', m: 3 }}>
       <Stack alignItems="center" spacing={2.5}>
-        <CardMedia component="img" image={avatar} sx={{ width: 112 }} />
+        <CardMedia component="img" image={avatar} sx={{ width: 85 }} />
         <Stack alignItems="center">
           <Typography variant="h5">Environment Setup</Typography>
         </Stack>
@@ -152,12 +185,21 @@ export default function NavCard() {
             onChange={handleInputChange} value={prodKey} 
             placeholder="Enter your API Key" />
         </FormControl>
+        <FormControl sx={{ mt: 2, width: '100%' }}>
+          <InputLabel htmlFor="activeAPI">Active API</InputLabel>
+          <Select id="activeAPI" name='activeAPI' label="Active API"
+            onChange={handleInputChange} value={activeAPI}>
+            <MenuItem value="local">Local</MenuItem>
+            <MenuItem value="staging">Staging</MenuItem>
+            <MenuItem value="prod">Production</MenuItem>
+          </Select>
+        </FormControl>
         <Divider sx={{ mt: 2, width: '100%' }} />
         <Typography variant="h6" sx={{ mt: 2, width: '100%' }}>
           End-user Settings
         </Typography>
         <FormControl sx={{ mt: 2, width: '100%' }}>
-          <InputLabel htmlFor="userSlug">User Slug</InputLabel>
+          <InputLabel htmlFor="userSlug">User</InputLabel>
           <OutlinedInput id="userSlug" name="userSlug" label="End-user Settings" 
             onChange={handleInputChange} value={userSlug}
             placeholder="test-base-user" />
@@ -174,15 +216,7 @@ export default function NavCard() {
             <MenuItem value="none">None</MenuItem>
           </Select>
         </FormControl>
-        <FormControl sx={{ mt: 2, width: '100%' }}>
-          <InputLabel htmlFor="activeAPI">Select Active API</InputLabel>
-          <Select id="activeAPI" name='activeAPI' label="Select Active API"
-            onChange={handleInputChange} value={activeAPI}>
-            <MenuItem value="local">Local</MenuItem>
-            <MenuItem value="staging">Staging</MenuItem>
-            <MenuItem value="prod">Production</MenuItem>
-          </Select>
-        </FormControl>
+        
         <Alert severity="error" icon={false} sx={{ mt: 2, width: '100%' }}>
           Reload the page to apply changes.
         </Alert>

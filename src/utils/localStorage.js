@@ -11,18 +11,16 @@ const END_USER_API = 'engagement.dev_base_app.end_user_api';
 const LOCALSTORAGE_INTEGRATION = 'engagement.dev_base_app.integration';
 const LOCALSTORAGE_EUS_LOCATION = 'amplitude.engagement.eus_location';
 
-
-// Create function to set and get local storage values
 export const setLocalStorage = (key, value) => {
     if (window !== 'undefined') {
-        window.localStorage.setItem(key, JSON.stringify(value));    // set value to local storage           
+        window.localStorage.setItem(key, value); 
     }
 }
 
 export const getLocalStorage = (key) => {
     if (window !== 'undefined') {
         const value = window.localStorage.getItem(key);
-        return value ? JSON.parse(value) : null;    // get value from local storage
+        return value ? value : null; 
     }
     return null;
 }
