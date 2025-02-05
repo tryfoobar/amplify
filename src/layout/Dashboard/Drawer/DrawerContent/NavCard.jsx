@@ -71,7 +71,7 @@ export default function NavCard() {
         user: {
           user_id: userSlug,
           device_id: '60201901-fbfa-4cd9-a0c0-5dd67d17aab9',
-          // user_properties: { foo: 'bar' }
+          user_properties: { foo: 'bar' }
         }
       });
     } else if (localSDK === 'amplitude') {
@@ -83,7 +83,6 @@ export default function NavCard() {
       amplitude.identify(identifyEvent);
     }
         
-
     // let url = 'https://gs.amplitude.com';
     // amplitude.add(window.engagement.plugin({ serverUrl: url }));
 
@@ -127,7 +126,6 @@ export default function NavCard() {
     };
   }, []);
 
-  // create input change handler 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     switch (name) {
@@ -159,6 +157,16 @@ export default function NavCard() {
         break;
     }
   };
+
+  const onBootWithID = () => {
+    window.location.reload();
+  }
+
+  const generateMeaningfulUserSlug = () => {
+    const prefix = 'test-user';
+    const randomString = Math.random().toString(36).substring(2, 10);
+    handleInputChange({ target: { name: 'userSlug', value: `${prefix}-${randomString}` } });
+}
 
   return (
     <MainCard sx={{ bgcolor: 'grey.50', m: 3 }}>
@@ -199,13 +207,18 @@ export default function NavCard() {
           End-user Settings
         </Typography>
         <FormControl sx={{ mt: 2, width: '100%' }}>
-          <InputLabel htmlFor="userSlug">User</InputLabel>
-          <OutlinedInput id="userSlug" name="userSlug" label="End-user Settings" 
+          <InputLabel htmlFor="userSlug">User Slug</InputLabel>
+          <OutlinedInput id="userSlug" name="userSlug" label="User Slug" 
             onChange={handleInputChange} value={userSlug}
             placeholder="test-base-user" />
         </FormControl>
-        <Button variant="contained" color="primary" sx={{ mt: 2, width: '100%' }}>
+        <Button variant="contained" color="primary" sx={{ mt: 2, width: '100%' }}
+          onClick={onBootWithID}>
           Boot with ID
+        </Button>
+        <Button variant="contained" color="primary" sx={{ mt: 2, width: '100%' }}
+          onClick={generateMeaningfulUserSlug}>
+          Generate Random User
         </Button>
         <Divider sx={{ mt: 2, width: '100%' }} />
         <FormControl sx={{ mt: 2, width: '100%' }}>
