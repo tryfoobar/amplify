@@ -1,4 +1,3 @@
-// material-ui
 import {
   Button,
   CardMedia,
@@ -12,7 +11,8 @@ import {
 } from '@mui/material';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useEffect } from 'react';
+import { Alert, AlertTitle } from '@mui/material';
+import { useEffect, useState } from 'react';
 import * as amplitude from '@amplitude/analytics-browser';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,19 +22,40 @@ import MainCard from 'components/MainCard';
 // assets
 import avatar from 'assets/images/users/avatar-group.png';
 
-
+// Utils
+import { 
+  getLocalAPIKey, 
+  setLocalAPIKey,
+  getLocalStagingAPIKey,
+  setLocalStagingAPIKey,
+  getLocalProdAPIKey,
+  setLocalProdAPIKey,
+  getLocalUserSlug,
+  setLocalUserSlug,
+  getLocalSDKKey,
+  setLocalSDKKey,
+  getLocalActiveAPI,
+  setLocalActiveAPI
+} from 'utils/localStorage';
 
 export default function NavCard() {
   const navigate = useNavigate();
 
+  const [activeAPI, setActiveAPI] = useState(getLocalActiveAPI());
+  const [localKey, setLocalKey] = useState(getLocalAPIKey());
+  const [stagingKey, setStagingKey] = useState(getLocalStagingAPIKey());
+  const [prodKey, setProdKey] = useState(getLocalProdAPIKey());
+  const [userSlug, setUserSlug] = useState(getLocalUserSlug());
+  const [localSDK, setLocalSDK] = useState(getLocalSDKKey());
 
   useEffect(() => {
     // Component did mount
-    console.log('NavCard mounted');
 
     let url = 'https://gs.amplitude.com';
     amplitude.add(window.engagement.plugin({ serverUrl: url }));
-    amplitude.init('412b587e95de8b568e53d727a1964b2', 'nino@commandbar.com',{ "autocapture": true });
+
+    // Engagement QA - G&S Plus
+    amplitude.init('460416694432445836f367cb4fb5c6ea', 'nino@commandbar.com',{ "autocapture": true });
     amplitude.track('Amplify: Page Viewed');
 
     window.engagement.boot({
@@ -73,6 +94,39 @@ export default function NavCard() {
     };
   }, []);
 
+  // create input change handler 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    switch (name) {
+      case 'localKey':
+        setLocalAPIKey(value);
+        setLocalKey(value, getLocalAPIKey());
+        break;
+      case 'stagingKey':
+        setLocalStagingAPIKey(value);
+        setStagingKey(value, getLocalStagingAPIKey());
+        break;
+      case 'prodKey':
+        setLocalProdAPIKey(value);
+        setProdKey(value, getLocalProdAPIKey());
+        break;
+      case 'userSlug':
+        setLocalUserSlug(value);
+        setUserSlug(value, getLocalUserSlug());
+        break;
+      case 'activeAPI':
+        setLocalActiveAPI(value);
+        setActiveAPI(value, getLocalActiveAPI());
+        break;
+      case 'localSDK':
+        setLocalSDKKey(value);
+        setLocalSDK(value, getLocalSDKKey());
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <MainCard sx={{ bgcolor: 'grey.50', m: 3 }}>
       <Stack alignItems="center" spacing={2.5}>
@@ -81,43 +135,57 @@ export default function NavCard() {
           <Typography variant="h5">Environment Setup</Typography>
         </Stack>
         <FormControl sx={{ mt: 2, width: '100%' }}>
-          <InputLabel htmlFor="local-key-input">Local API Key</InputLabel>
-          <OutlinedInput id="local-key-input" label="Local API Key" placeholder="Enter your API Key" />
+          <InputLabel htmlFor="localKey">Local API Key</InputLabel>
+          <OutlinedInput id="localKey" name='localKey' label="Local API Key" 
+            onChange={handleInputChange} value={localKey}
+            placeholder="Enter your API Key" />
         </FormControl>
         <FormControl sx={{ mt: 2, width: '100%' }}>
-          <InputLabel htmlFor="staging-key-input">Staging API Key</InputLabel>
-          <OutlinedInput id="staging-key-input" label="Staging API Key" placeholder="Enter your API Key" />
+          <InputLabel htmlFor="stagingKey">Staging API Key</InputLabel>
+          <OutlinedInput id="stagingKey" name='stagingKey' label="Staging API Key" 
+            onChange={handleInputChange} value={stagingKey} 
+            placeholder="Enter your API Key" />
         </FormControl>
         <FormControl sx={{ mt: 2, width: '100%' }}>
-          <InputLabel htmlFor="prod-key-input">Production API Key</InputLabel>
-          <OutlinedInput id="prod-key-input" label="Production API Key" placeholder="Enter your API Key" />
+          <InputLabel htmlFor="prodKey">Production API Key</InputLabel>
+          <OutlinedInput id="prodKey" name='prodKey' label="Production API Key" 
+            onChange={handleInputChange} value={prodKey} 
+            placeholder="Enter your API Key" />
+        </FormControl>
+        <Divider sx={{ mt: 2, width: '100%' }} />
+        <Typography variant="h6" sx={{ mt: 2, width: '100%' }}>
+          End-user Settings
+        </Typography>
+        <FormControl sx={{ mt: 2, width: '100%' }}>
+          <InputLabel htmlFor="userSlug">User Slug</InputLabel>
+          <OutlinedInput id="userSlug" name="userSlug" label="End-user Settings" 
+            onChange={handleInputChange} value={userSlug}
+            placeholder="test-base-user" />
+        </FormControl>
+        <Button variant="contained" color="primary" sx={{ mt: 2, width: '100%' }}>
+          Boot with ID
+        </Button>
+        <Divider sx={{ mt: 2, width: '100%' }} />
+        <FormControl sx={{ mt: 2, width: '100%' }}>
+          <InputLabel htmlFor="localSDK">Local SDK Integration</InputLabel>
+          <Select id="localSDK" name="localSDK" label="Select Local SDK"
+            onChange={handleInputChange} value={localSDK}>
+            <MenuItem value="amplitude">Amplitude</MenuItem>
+            <MenuItem value="none">None</MenuItem>
+          </Select>
         </FormControl>
         <FormControl sx={{ mt: 2, width: '100%' }}>
-          <InputLabel htmlFor="select-api">Select Active API</InputLabel>
-          <Select id="select-api" label="Select Active API" defaultValue="local">
+          <InputLabel htmlFor="activeAPI">Select Active API</InputLabel>
+          <Select id="activeAPI" name='activeAPI' label="Select Active API"
+            onChange={handleInputChange} value={activeAPI}>
             <MenuItem value="local">Local</MenuItem>
             <MenuItem value="staging">Staging</MenuItem>
             <MenuItem value="prod">Production</MenuItem>
           </Select>
         </FormControl>
-
-        <Divider sx={{ mt: 2, width: '100%' }} />
-        <FormControl sx={{ mt: 2, width: '100%' }}>
-          <InputLabel htmlFor="end-user-settings">End-user Settings</InputLabel>
-          <OutlinedInput id="end-user-settings" label="End-user Settings" placeholder="test-base-user" />
-        </FormControl>
-        <Button variant="contained" color="primary" sx={{ mt: 2, width: '100%' }}>
-          Boot with ID
-        </Button>
-
-        <Divider sx={{ mt: 2, width: '100%' }} />
-        <FormControl sx={{ mt: 2, width: '100%' }}>
-          <InputLabel htmlFor="select-local-sdk">Local SDK Integration</InputLabel>
-          <Select id="select-local-sdk" label="Select Local SDK" defaultValue="amplitude">
-            <MenuItem value="amplitude">Amplitude</MenuItem>
-            <MenuItem value="none">None</MenuItem>
-          </Select>
-        </FormControl>
+        <Alert severity="error" icon={false} sx={{ mt: 2, width: '100%' }}>
+          Reload the page to apply changes.
+        </Alert>
       </Stack>
     </MainCard>
   );
