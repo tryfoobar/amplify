@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { Alert, AlertTitle } from '@mui/material';
+import { Alert } from '@mui/material';
 import { useEffect, useState } from 'react';
 import * as amplitude from '@amplitude/analytics-browser';
 import { useNavigate } from 'react-router-dom';
@@ -48,27 +48,24 @@ export default function NavCard() {
   const [localSDK, setLocalSDK] = useState(getLocalSDKKey());
 
   useEffect(() => {
-
     const analyticsHost = localSDK === 'staging' ? 'https://api.stag2.amplitude.com/2/httpapi' : undefined;
 
-    let decideHost;
-    switch (activeAPI) {
-      case 'local':
-      decideHost = 'http://localhost:10001';
-      break;
-      case 'staging':
-      decideHost = 'https://gs.stag2.amplitude.com';
-      break;
-      case 'prod-eu':
-      decideHost = 'https://gs.eu.amplitude.com';
-      break;
-      case 'prod':
-      default:
-      decideHost = 'https://gs.amplitude.com';
-      break;
-    }
+    const decideHostMap = {
+      local: 'http://localhost:10001',
+      staging: 'https://gs.stag2.amplitude.com',
+      'prod-eu': 'https://gs.eu.amplitude.com',
+      prod: 'https://gs.amplitude.com'
+    };
 
-    const activeAPIKey = activeAPI === 'local' ? localKey : stagingKey;
+    const decideHost = decideHostMap[activeAPI] || 'https://gs.amplitude.com';
+
+    const activeAPIKeyMap = {
+      local: localKey,
+      staging: stagingKey,
+      prod: prodKey
+    };
+
+    const activeAPIKey = activeAPIKeyMap[activeAPI] || prodKey;
 
     const engagementOptions = {
       serverUrl: decideHost,
@@ -84,12 +81,16 @@ export default function NavCard() {
     if (localSDK === 'none') {
       window.engagement.init(activeAPIKey, engagementOptions);
       window.engagement.boot({ user });
+      console.log('Local SDK is not integrated', activeAPIKey, decideHost);
     } else if (localSDK === 'amplitude') {
       amplitude.add(window.engagement.plugin(engagementOptions));
       amplitude.init(activeAPIKey, userSlug, { serverUrl: analyticsHost, logLevel: 4 });
+      
       const identifyEvent = new amplitude.Identify();
       identifyEvent.set('foo', 'bar');
       amplitude.identify(identifyEvent);
+
+      console.log('Local SDK is integrated with Amplitude', activeAPIKey, decideHost);
     }
 
     // Engeagement SDK Router
@@ -124,41 +125,30 @@ export default function NavCard() {
     // })
 
     return () => {
-      // Component will unmount
       console.log('NavCard unmounted');
     };
-  }, []);
+  }, [activeAPI, localKey, stagingKey, prodKey, userSlug, localSDK, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    switch (name) {
-      case 'localKey':
-        setLocalAPIKey(value);
-        setLocalKey(value, getLocalAPIKey());
-        break;
-      case 'stagingKey':
-        setLocalStagingAPIKey(value);
-        setStagingKey(value, getLocalStagingAPIKey());
-        break;
-      case 'prodKey':
-        setLocalProdAPIKey(value);
-        setProdKey(value, getLocalProdAPIKey());
-        break;
-      case 'userSlug':
-        setLocalUserSlug(value);
-        setUserSlug(value, getLocalUserSlug());
-        break;
-      case 'activeAPI':
-        setLocalActiveAPI(value);
-        setActiveAPI(value, getLocalActiveAPI());
-        break;
-      case 'localSDK':
-        setLocalSDKKey(value);
-        setLocalSDK(value, getLocalSDKKey());
-        break;
-      default:
-        break;
-    }
+    const setters = {
+      localKey: setLocalAPIKey,
+      stagingKey: setLocalStagingAPIKey,
+      prodKey: setLocalProdAPIKey,
+      userSlug: setLocalUserSlug,
+      activeAPI: setLocalActiveAPI,
+      localSDK: setLocalSDKKey
+    };
+    setters[name](value);
+    const stateSetters = {
+      localKey: setLocalKey,
+      stagingKey: setStagingKey,
+      prodKey: setProdKey,
+      userSlug: setUserSlug,
+      activeAPI: setActiveAPI,
+      localSDK: setLocalSDK
+    };
+    stateSetters[name](value);
   };
 
   const onBootWithID = () => {
@@ -169,7 +159,14 @@ export default function NavCard() {
     const prefix = 'test-user';
     const randomString = Math.random().toString(36).substring(2, 10);
     handleInputChange({ target: { name: 'userSlug', value: `${prefix}-${randomString}` } });
-}
+  }
+
+  const renderInputField = (id, label, value) => (
+    <FormControl key={id} sx={{ mt: 2, width: '100%' }}>
+      <InputLabel htmlFor={id}>{label}</InputLabel>
+      <OutlinedInput id={id} name={id} label={label} onChange={handleInputChange} value={value} placeholder={`Enter your ${label}`} />
+    </FormControl>
+  );
 
   return (
     <MainCard sx={{ bgcolor: 'grey.50', m: 3 }}>
@@ -181,12 +178,7 @@ export default function NavCard() {
           { id: 'stagingKey', label: 'Staging API Key', value: stagingKey },
           { id: 'prodKey', label: 'Production API Key', value: prodKey },
           { id: 'userSlug', label: 'User Slug', value: userSlug }
-        ].map(({ id, label, value }) => (
-          <FormControl key={id} sx={{ mt: 2, width: '100%' }}>
-            <InputLabel htmlFor={id}>{label}</InputLabel>
-            <OutlinedInput id={id} name={id} label={label} onChange={handleInputChange} value={value} placeholder={`Enter your ${label}`} />
-          </FormControl>
-        ))}
+        ].map(({ id, label, value }) => renderInputField(id, label, value))}
         <FormControl sx={{ mt: 2, width: '100%' }}>
           <InputLabel htmlFor="activeAPI">Active API</InputLabel>
           <Select id="activeAPI" name="activeAPI" label="Active API" onChange={handleInputChange} value={activeAPI}>
