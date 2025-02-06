@@ -1,4 +1,5 @@
 # Amplify
+![CleanShot 2025-02-06 at 16 03 50@2x](https://github.com/user-attachments/assets/72100f6f-7df1-4550-9559-77e4873610cf)
 
 This project is based on the [Mantis Free React Admin Template](https://github.com/codedthemes/mantis-free-react-admin-template).
 
