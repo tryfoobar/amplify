@@ -75,7 +75,7 @@ export default function NavCard() {
     const user = {
       user_id: userSlug,
       device_id: '60201901-fbfa-4cd9-a0c0-5dd67d17aab9',
-      user_properties: { foo: 'bar' }
+      user_properties: { foo: 'bar' },
     };
 
     if (localSDK === 'none') {
@@ -84,7 +84,10 @@ export default function NavCard() {
       console.log('Local SDK is not integrated', activeAPIKey, decideHost);
     } else if (localSDK === 'amplitude') {
       amplitude.add(window.engagement.plugin(engagementOptions));
+
       amplitude.init(activeAPIKey, userSlug, { serverUrl: analyticsHost, logLevel: 4 });
+      // amplitude.init('5f31a26827b8f871a76fc89a1e135348', userSlug, { serverUrl: analyticsHost, logLevel: 4, autocapture: true });
+      amplitude.track('Amplify: Initialized', { user });
       
       const identifyEvent = new amplitude.Identify();
       identifyEvent.set('foo', 'bar');
