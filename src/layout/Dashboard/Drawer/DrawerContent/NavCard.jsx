@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { Alert } from '@mui/material';
 import { useEffect, useState } from 'react';
 import * as amplitude from '@amplitude/analytics-browser';
+import { plugin as engagementPlugin } from '@amplitude/engagement-browser';
 import { useNavigate } from 'react-router-dom';
 
 // project import
@@ -83,10 +84,9 @@ export default function NavCard() {
       window.engagement.boot({ user });
       console.log('Local SDK is not integrated', activeAPIKey, decideHost);
     } else if (localSDK === 'amplitude') {
-      amplitude.add(window.engagement.plugin(engagementOptions));
-
+      // amplitude.add(window.engagement.plugin(engagementOptions));
       amplitude.init(activeAPIKey, userSlug, { serverUrl: analyticsHost, logLevel: 4 });
-      // amplitude.init('5f31a26827b8f871a76fc89a1e135348', userSlug, { serverUrl: analyticsHost, logLevel: 4, autocapture: true });
+      amplitude.add(engagementPlugin(engagementOptions));
       amplitude.track('Amplify: Initialized', { user });
       
       const identifyEvent = new amplitude.Identify();
@@ -99,23 +99,23 @@ export default function NavCard() {
     // Engeagement SDK Router
     window.engagement.setRouter((newUrl) => navigate(newUrl));
         
-    // window.engagement.boot({
-    //   user: {
-    //     user_id: 'ninooooonin',
-    //     device_id: '60201901-fbfa-4cd9-a0c0-5dd67d17aab9',
-    //     user_properties: {
-    //       email: 'nino+amplitude@commandbar.com'
-    //     }
-    //   },
-    //   integrations: [
-    //   {
-    //     track: (event) => {
-    //       console.log(event)
-    //       window.engagement.trigger(event);
-    //     }
-    //   }
-    //   ]
-    // });
+    window.engagement.boot({
+      user: {
+        user_id: 'ninooooonin',
+        device_id: '60201901-fbfa-4cd9-a0c0-5dd67d17aab9',
+        user_properties: {
+          email: 'nino+amplitude@commandbar.com'
+        }
+      },
+      integrations: [
+      {
+        track: (event) => {
+          console.log(event)
+          window.engagement.trigger(event);
+        }
+      }
+      ]
+    });
 
     // const identifyEvent = new amplitude.Identify();
     // identifyEvent.set('isActive', 'true');
