@@ -80,9 +80,13 @@ export default function NavCard() {
     };
 
     if (localSDK === 'none') {
-      window.engagement.init(activeAPIKey, engagementOptions);
-      window.engagement.boot({ user });
-      console.log('Local SDK is not integrated', activeAPIKey, decideHost);
+      if (window.engagement) {
+        window.engagement.init(activeAPIKey, engagementOptions);
+        window.engagement.boot({ user });
+        console.log('Local SDK is not integrated', activeAPIKey, decideHost);
+      } else {
+        console.warn('window.engagement is not available. Make sure engagement-browser.js is loaded.');
+      }
     } else if (localSDK === 'amplitude') {
       // amplitude.add(window.engagement.plugin(engagementOptions));
       amplitude.init(activeAPIKey, userSlug, { serverUrl: analyticsHost, logLevel: 4 });
@@ -96,10 +100,11 @@ export default function NavCard() {
       console.log('Local SDK is integrated with Amplitude', activeAPIKey, decideHost);
     }
 
-    // Engeagement SDK Router
-    window.engagement.setRouter((newUrl) => navigate(newUrl));
+    // Engagement SDK Router
+    if (window.engagement) {
+      window.engagement.setRouter((newUrl) => navigate(newUrl));
         
-    window.engagement.boot({
+      window.engagement.boot({
       user: {
         user_id: 'ninooooonin',
         device_id: '60201901-fbfa-4cd9-a0c0-5dd67d17aab9',
@@ -108,14 +113,19 @@ export default function NavCard() {
         }
       },
       integrations: [
-      {
-        track: (event) => {
-          console.log(event)
-          window.engagement.trigger(event);
+        {
+          track: (event) => {
+            console.log(event);
+            if (window.engagement) {
+              window.engagement.trigger(event);
+            }
+          }
         }
-      }
       ]
     });
+    } else {
+      console.warn('window.engagement is not available for router and boot setup.');
+    }
 
     // const identifyEvent = new amplitude.Identify();
     // identifyEvent.set('isActive', 'true');
