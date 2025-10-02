@@ -29,12 +29,16 @@ export default defineConfig({
     // this ensures that the browser opens upon server start
     open: true,
     // this sets a default port to 3000
-    // port: 3000
+    // port: 3000,
+    // Handle client-side routing
+    historyApiFallback: true
   },
   preview: {
     // this ensures that the browser opens upon preview start
     open: true,
     // this sets a default port to 3000
-    // port: 3000
+    // port: 3000,
+    // Handle client-side routing in preview mode
+    historyApiFallback: true
   }
 });
