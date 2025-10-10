@@ -89,8 +89,8 @@ export default function NavCard() {
       }
     } else if (localSDK === 'amplitude') {
       // amplitude.add(window.engagement.plugin(engagementOptions));
-      amplitude.init(activeAPIKey, userSlug, { serverUrl: analyticsHost, logLevel: 4 });
       amplitude.add(engagementPlugin(engagementOptions));
+      amplitude.init(activeAPIKey, userSlug, { serverUrl: analyticsHost, logLevel: 4 });
       amplitude.track('Amplify: Initialized', { user });
       
       const identifyEvent = new amplitude.Identify();
@@ -103,26 +103,6 @@ export default function NavCard() {
     // Engagement SDK Router
     if (window.engagement) {
       window.engagement.setRouter((newUrl) => navigate(newUrl));
-        
-      window.engagement.boot({
-      user: {
-        user_id: 'ninooooonin',
-        device_id: '60201901-fbfa-4cd9-a0c0-5dd67d17aab9',
-        user_properties: {
-          email: 'nino+amplitude@commandbar.com'
-        }
-      },
-      integrations: [
-        {
-          track: (event) => {
-            console.log(event);
-            if (window.engagement) {
-              window.engagement.trigger(event);
-            }
-          }
-        }
-      ]
-    });
     } else {
       console.warn('window.engagement is not available for router and boot setup.');
     }
