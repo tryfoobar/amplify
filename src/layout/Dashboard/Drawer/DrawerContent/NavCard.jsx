@@ -101,7 +101,7 @@ export default function NavCard() {
       amplitude.add(engagementPlugin(engagementOptions));
       amplitude.init(activeAPIKey, userSlug, { serverUrl: analyticsHost, logLevel: 4 });
       amplitude.track('Amplify: Initialized', { user });
-      
+
       const identifyEvent = new amplitude.Identify();
       identifyEvent.set('foo', 'bar');
       amplitude.identify(identifyEvent);
@@ -119,7 +119,7 @@ export default function NavCard() {
     // const identifyEvent = new amplitude.Identify();
     // identifyEvent.set('isActive', 'true');
     // amplitude.identify(identifyEvent);
-    
+
     // window.engagement.addIntegration({
     //   track: (event) => {
     //     // window.engagement.trigger(event);
@@ -224,7 +224,7 @@ export default function NavCard() {
         <FormControl sx={{ mt: 2, width: '100%' }}>
           <InputLabel htmlFor="launchCode">Launch Code</InputLabel>
           <Select id="launchCode" name="launchCode" label="Launch Code" onChange={handleInputChange} value={launchCode}>
-            {['local', 'staging', 'stag2', 'prod'].map(code => (
+            {['local', 'staging', 'prod'].map(code => (
               <MenuItem key={code} value={code}>{code.charAt(0).toUpperCase() + code.slice(1)}</MenuItem>
             ))}
           </Select>
