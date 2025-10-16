@@ -38,7 +38,9 @@ import {
   getLocalSDKKey,
   setLocalSDKKey,
   getLocalActiveAPI,
-  setLocalActiveAPI
+  setLocalActiveAPI,
+  getLocalLaunchCode,
+  setLocalLaunchCode
 } from 'utils/localStorage';
 
 export default function NavCard() {
@@ -50,8 +52,12 @@ export default function NavCard() {
   const [prodKey, setProdKey] = useState(getLocalProdAPIKey());
   const [userSlug, setUserSlug] = useState(getLocalUserSlug());
   const [localSDK, setLocalSDK] = useState(getLocalSDKKey());
+  const [launchCode, setLaunchCode] = useState(getLocalLaunchCode());
 
   useEffect(() => {
+    // Set the current launch code in localStorage on page load/refresh
+    setLocalLaunchCode(launchCode);
+    
     const analyticsHost = localSDK === 'staging' ? 'https://api.stag2.amplitude.com/2/httpapi' : undefined;
 
     const decideHostMap = {
@@ -123,7 +129,7 @@ export default function NavCard() {
     return () => {
       console.log('NavCard unmounted');
     };
-  }, [activeAPI, localKey, stagingKey, prodKey, userSlug, localSDK, navigate]);
+  }, [activeAPI, localKey, stagingKey, prodKey, userSlug, localSDK, launchCode, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -133,7 +139,8 @@ export default function NavCard() {
       prodKey: setLocalProdAPIKey,
       userSlug: setLocalUserSlug,
       activeAPI: setLocalActiveAPI,
-      localSDK: setLocalSDKKey
+      localSDK: setLocalSDKKey,
+      launchCode: setLocalLaunchCode
     };
     setters[name](value);
     const stateSetters = {
@@ -142,7 +149,8 @@ export default function NavCard() {
       prodKey: setProdKey,
       userSlug: setUserSlug,
       activeAPI: setActiveAPI,
-      localSDK: setLocalSDK
+      localSDK: setLocalSDK,
+      launchCode: setLaunchCode
     };
     stateSetters[name](value);
   };
@@ -210,6 +218,14 @@ export default function NavCard() {
           <Select id="activeAPI" name="activeAPI" label="Active API" onChange={handleInputChange} value={activeAPI}>
             {['local', 'staging', 'prod'].map(api => (
               <MenuItem key={api} value={api}>{api.charAt(0).toUpperCase() + api.slice(1)}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl sx={{ mt: 2, width: '100%' }}>
+          <InputLabel htmlFor="launchCode">Launch Code</InputLabel>
+          <Select id="launchCode" name="launchCode" label="Launch Code" onChange={handleInputChange} value={launchCode}>
+            {['local', 'staging', 'stag2', 'prod'].map(code => (
+              <MenuItem key={code} value={code}>{code.charAt(0).toUpperCase() + code.slice(1)}</MenuItem>
             ))}
           </Select>
         </FormControl>

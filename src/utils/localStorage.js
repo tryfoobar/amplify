@@ -6,6 +6,7 @@ const LOCALSTORAGE_PROD_API_KEY = 'engagement.dev_base_app.prod_api_key';
 const LOCALSTORAGE_LOCAL_API_KEY = 'engagement.dev_base_app.local_api_key';
 const LOCALSTORAGE_LOCAL_SDK_KEY = 'engagement.dev_base_app.local_sdk_key';
 const LOCALSTORAGE_LOCAL_ACTIVE_API_KEY = 'engagement.dev_base_app.local_active_api_key';
+const LOCALSTORAGE_LAUNCH_CODE = 'amplitude.engagement.launchCode';
 const LOCALSTORAGE_USER_SLUG = 'test-base-user';
 const END_USER_API = 'engagement.dev_base_app.end_user_api';
 const LOCALSTORAGE_INTEGRATION = 'engagement.dev_base_app.integration';
@@ -101,5 +102,31 @@ export const getLocalSDKKey = () => {
 
 export const setLocalSDKKey = (value) => {
     setLocalStorage(LOCALSTORAGE_LOCAL_SDK_KEY, value);
+}
+
+// Launch Code
+export const getLocalLaunchCode = () => {
+    const storedValue = getLocalStorage(LOCALSTORAGE_LAUNCH_CODE);
+    
+    // Reverse mapping to convert stored formatted string back to dropdown key
+    const reverseMap = {
+        'sdk=local;server=local': 'local',
+        'sdk=local;server=staging': 'staging',
+        'sdk=local;server=stag2': 'stag2',
+        'sdk=local;server=prod': 'prod'
+    };
+    
+    return reverseMap[storedValue] || 'local';
+}
+
+export const setLocalLaunchCode = (value) => {
+    const launchCodeMap = {
+        local: 'sdk=local;server=local',
+        staging: 'sdk=local;server=staging',
+        stag2: 'sdk=local;server=stag2',
+        prod: 'sdk=local;server=prod'
+    };
+    const launchCodeValue = launchCodeMap[value] || launchCodeMap.local;
+    setLocalStorage(LOCALSTORAGE_LAUNCH_CODE, launchCodeValue);
 }
 
