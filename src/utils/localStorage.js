@@ -112,7 +112,6 @@ export const getLocalLaunchCode = () => {
     const reverseMap = {
         'sdk=local;server=local': 'local',
         'sdk=staging;server=staging': 'staging',
-        'sdk=staging;server=stag2': 'stag2',
         'sdk=prod;server=prod': 'prod'
     };
     
@@ -123,7 +122,6 @@ export const setLocalLaunchCode = (value) => {
     const launchCodeMap = {
         local: 'sdk=local;server=local',
         staging: 'sdk=staging;server=staging',
-        stag2: 'sdk=staging;server=stag2',
         prod: 'sdk=prod;server=prod'
     };
     const launchCodeValue = launchCodeMap[value] || launchCodeMap.local;
