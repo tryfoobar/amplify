@@ -6,8 +6,11 @@ import {
   OutlinedInput,
   InputLabel,
   FormControl,
-  Divider
+  Divider,
+  IconButton,
+  InputAdornment
 } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { Alert } from '@mui/material';
@@ -154,10 +157,40 @@ export default function NavCard() {
     handleInputChange({ target: { name: 'userSlug', value: `${prefix}-${randomString}` } });
   }
 
+  const copyUserSlugToClipboard = () => {
+    navigator.clipboard.writeText(userSlug).then(() => {
+      console.log('User slug copied to clipboard:', userSlug);
+    }).catch(err => {
+      console.error('Failed to copy user slug:', err);
+    });
+  }
+
   const renderInputField = (id, label, value) => (
     <FormControl key={id} sx={{ mt: 2, width: '100%' }}>
       <InputLabel htmlFor={id}>{label}</InputLabel>
-      <OutlinedInput id={id} name={id} label={label} onChange={handleInputChange} value={value} placeholder={`Enter your ${label}`} />
+      <OutlinedInput 
+        id={id} 
+        name={id} 
+        label={label} 
+        onChange={handleInputChange} 
+        value={value} 
+        placeholder={`Enter your ${label}`}
+        endAdornment={
+          id === 'userSlug' ? (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="copy user slug"
+                onClick={copyUserSlugToClipboard}
+                edge="end"
+                size="small"
+                sx={{ padding: 0.2 }}
+              >
+                <ContentCopyIcon fontSize="small" />
+              </IconButton>
+            </InputAdornment>
+          ) : null
+        }
+      />
     </FormControl>
   );
 
