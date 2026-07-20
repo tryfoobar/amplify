@@ -104,6 +104,10 @@ export default function NavCard() {
 
       const identifyEvent = new amplitude.Identify();
       identifyEvent.set('foo', 'bar');
+      identifyEvent.set('ga_id', userSlug);
+      identifyEvent.set('plan_id', userSlug);
+      identifyEvent.set('plan_name', userSlug);
+
       amplitude.identify(identifyEvent);
 
       console.log('Local SDK is integrated with Amplitude', activeAPIKey, decideHost);
