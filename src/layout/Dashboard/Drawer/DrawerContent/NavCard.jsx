@@ -85,7 +85,7 @@ export default function NavCard() {
     const user = {
       user_id: userSlug,
       device_id: '60201901-fbfa-4cd9-a0c0-5dd67d17aab9',
-      user_properties: { foo: 'bar' },
+      user_properties: { foo: 'bar', ga_id: userSlug, plan_id: userSlug, plan_name: userSlug },
     };
 
     if (localSDK === 'none') {
