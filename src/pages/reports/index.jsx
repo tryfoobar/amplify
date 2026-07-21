@@ -20,6 +20,7 @@ import ReportAreaChart from './ReportAreaChart';
 import UniqueVisitorCard from './UniqueVisitorCard';
 import SaleReportCard from './SaleReportCard';
 import OrdersTable from './OrdersTable';
+import SurveyBuilderSection from 'components/SurveyBuilderSection';
 
 // assets
 import GiftOutlined from '@ant-design/icons/GiftOutlined';
@@ -99,7 +100,10 @@ export default function ReportsDefault() {
         </MainCard>
       </Grid>
 
-   
+      {/* survey builder */}
+      <Grid item xs={12}>
+        <SurveyBuilderSection />
+      </Grid>
 
     </Grid>
   );
