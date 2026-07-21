@@ -31,7 +31,18 @@ const MENU_ITEMS = [
   'Add note',
   'Hide question',
   'Delete',
-  'Change Restriction'
+  'Change Restriction',
+  'Duplicate question',
+  'Add skip logic',
+  'Add display logic',
+  'Randomize choices',
+  'Require answer',
+  'Add validation',
+  'Import from library',
+  'Export question',
+  'View response data',
+  'Reset formatting',
+  'Convert question type'
 ];
 
 const NAV_ROWS = [
@@ -100,7 +111,7 @@ function QuestionCard() {
         slotProps={{
           paper: {
             elevation: 3,
-            sx: { minWidth: 260, borderRadius: 2, py: 0.5 }
+            sx: { minWidth: 260, maxHeight: 360, borderRadius: 2, py: 0.5, overflowY: 'auto' }
           }
         }}
       >
