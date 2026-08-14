@@ -117,25 +117,10 @@ export default function NavCard() {
     if (window.engagement) {
       window.engagement.setRouter((newUrl) => navigate(newUrl));
 
-      // Callback tools the AI agent can invoke client-side.
-      // The handler receives the parsed tool args and its return value is sent
-      // back to the agent as the tool result.
-      window.engagement.registerCallbackTool('navigate_to_page', ({ page }) => {
-        const routes = ['home', 'projects', 'reports', 'teams'];
-        if (!routes.includes(page)) {
-          return { status: 'error', message: `Unknown page "${page}". Available pages: ${routes.join(', ')}` };
-        }
-        navigate(`/${page}`);
-        return { status: 'ok', page };
+      // Callback tool the AI agent can invoke client-side.
+      window.engagement.registerCallbackTool('test_callback_tool', (args) => {
+        console.log('registerCallbackTool', args);
       });
-
-      window.engagement.registerCallbackTool('get_dashboard_context', () => ({
-        status: 'ok',
-        activeAPI,
-        localSDK,
-        user_id: userSlug,
-        path: window.location.pathname
-      }));
     } else {
       console.warn('window.engagement is not available for router and boot setup.');
     }
