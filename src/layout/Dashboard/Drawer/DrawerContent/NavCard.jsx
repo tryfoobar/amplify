@@ -40,7 +40,15 @@ import {
   getLocalActiveAPI,
   setLocalActiveAPI,
   getLocalLaunchCode,
-  setLocalLaunchCode
+  setLocalLaunchCode,
+  getLocalGroupType,
+  setLocalGroupType,
+  getLocalGroupName,
+  setLocalGroupName,
+  getLocalGroupProperty,
+  setLocalGroupProperty,
+  getLocalGroupPropertyValue,
+  setLocalGroupPropertyValue
 } from 'utils/localStorage';
 
 export default function NavCard() {
@@ -53,12 +61,16 @@ export default function NavCard() {
   const [userSlug, setUserSlug] = useState(getLocalUserSlug());
   const [localSDK, setLocalSDK] = useState(getLocalSDKKey());
   const [launchCode, setLaunchCode] = useState(getLocalLaunchCode());
+  const [groupType, setGroupType] = useState(getLocalGroupType());
+  const [groupName, setGroupName] = useState(getLocalGroupName());
+  const [groupProperty, setGroupProperty] = useState(getLocalGroupProperty());
+  const [groupPropertyValue, setGroupPropertyValue] = useState(getLocalGroupPropertyValue());
 
   useEffect(() => {
     // Set the current launch code in localStorage on page load/refresh
     setLocalLaunchCode(launchCode);
     
-    const analyticsHost = localSDK === 'staging' ? 'https://api.stag2.amplitude.com/2/httpapi' : undefined;
+    const analyticsHost = activeAPI === 'staging' ? 'https://api.stag2.amplitude.com/2/httpapi' : undefined;
 
     const decideHostMap = {
       local: 'http://localhost:10001',
@@ -110,12 +122,25 @@ export default function NavCard() {
 
       amplitude.identify(identifyEvent);
 
+      // Put the user in a group, and set a property on the group (not the user) for group property targeting
+      if (groupType && groupName) {
+        amplitude.setGroup(groupType, groupName);
+        if (groupProperty) {
+          amplitude.groupIdentify(groupType, groupName, new amplitude.Identify().set(groupProperty, groupPropertyValue));
+        }
+      }
+
       console.log('Local SDK is integrated with Amplitude', activeAPIKey, decideHost);
     }
 
     // Engagement SDK Router
     if (window.engagement) {
       window.engagement.setRouter((newUrl) => navigate(newUrl));
+
+      // Callback tool the AI agent can invoke client-side.
+      window.engagement.registerCallbackTool('test_callback_tool', (args) => {
+        console.log('registerCallbackTool', args);
+      });
     } else {
       console.warn('window.engagement is not available for router and boot setup.');
     }
@@ -133,7 +158,7 @@ export default function NavCard() {
     return () => {
       console.log('NavCard unmounted');
     };
-  }, [activeAPI, localKey, stagingKey, prodKey, userSlug, localSDK, launchCode, navigate]);
+  }, [activeAPI, localKey, stagingKey, prodKey, userSlug, localSDK, launchCode, groupType, groupName, groupProperty, groupPropertyValue, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -144,7 +169,11 @@ export default function NavCard() {
       userSlug: setLocalUserSlug,
       activeAPI: setLocalActiveAPI,
       localSDK: setLocalSDKKey,
-      launchCode: setLocalLaunchCode
+      launchCode: setLocalLaunchCode,
+      groupType: setLocalGroupType,
+      groupName: setLocalGroupName,
+      groupProperty: setLocalGroupProperty,
+      groupPropertyValue: setLocalGroupPropertyValue
     };
     setters[name](value);
     const stateSetters = {
@@ -154,7 +183,11 @@ export default function NavCard() {
       userSlug: setUserSlug,
       activeAPI: setActiveAPI,
       localSDK: setLocalSDK,
-      launchCode: setLaunchCode
+      launchCode: setLaunchCode,
+      groupType: setGroupType,
+      groupName: setGroupName,
+      groupProperty: setGroupProperty,
+      groupPropertyValue: setGroupPropertyValue
     };
     stateSetters[name](value);
   };
@@ -215,7 +248,11 @@ export default function NavCard() {
           { id: 'localKey', label: 'Local API Key', value: localKey },
           { id: 'stagingKey', label: 'Staging API Key', value: stagingKey },
           { id: 'prodKey', label: 'Production API Key', value: prodKey },
-          { id: 'userSlug', label: 'User Slug', value: userSlug }
+          { id: 'userSlug', label: 'User Slug', value: userSlug },
+          { id: 'groupType', label: 'Group Type', value: groupType },
+          { id: 'groupName', label: 'Group Name', value: groupName },
+          { id: 'groupProperty', label: 'Group Property', value: groupProperty },
+          { id: 'groupPropertyValue', label: 'Group Property Value', value: groupPropertyValue }
         ].map(({ id, label, value }) => renderInputField(id, label, value))}
         <FormControl sx={{ mt: 2, width: '100%' }}>
           <InputLabel htmlFor="activeAPI">Active API</InputLabel>

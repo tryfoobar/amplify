@@ -11,6 +11,10 @@ const LOCALSTORAGE_USER_SLUG = 'test-base-user';
 const END_USER_API = 'engagement.dev_base_app.end_user_api';
 const LOCALSTORAGE_INTEGRATION = 'engagement.dev_base_app.integration';
 const LOCALSTORAGE_EUS_LOCATION = 'amplitude.engagement.eus_location';
+const LOCALSTORAGE_GROUP_TYPE = 'engagement.dev_base_app.group_type';
+const LOCALSTORAGE_GROUP_NAME = 'engagement.dev_base_app.group_name';
+const LOCALSTORAGE_GROUP_PROPERTY = 'engagement.dev_base_app.group_property';
+const LOCALSTORAGE_GROUP_PROPERTY_VALUE = 'engagement.dev_base_app.group_property_value';
 
 export const setLocalStorage = (key, value) => {
     if (window !== 'undefined') {
@@ -128,3 +132,35 @@ export const setLocalLaunchCode = (value) => {
     setLocalStorage(LOCALSTORAGE_LAUNCH_CODE, launchCodeValue);
 }
 
+// Group (setGroup / groupIdentify)
+export const getLocalGroupType = () => {
+    return getLocalStorage(LOCALSTORAGE_GROUP_TYPE) || '';
+}
+
+export const setLocalGroupType = (value) => {
+    setLocalStorage(LOCALSTORAGE_GROUP_TYPE, value);
+}
+
+export const getLocalGroupName = () => {
+    return getLocalStorage(LOCALSTORAGE_GROUP_NAME) || '';
+}
+
+export const setLocalGroupName = (value) => {
+    setLocalStorage(LOCALSTORAGE_GROUP_NAME, value);
+}
+
+export const getLocalGroupProperty = () => {
+    return getLocalStorage(LOCALSTORAGE_GROUP_PROPERTY) || '';
+}
+
+export const setLocalGroupProperty = (value) => {
+    setLocalStorage(LOCALSTORAGE_GROUP_PROPERTY, value);
+}
+
+export const getLocalGroupPropertyValue = () => {
+    return getLocalStorage(LOCALSTORAGE_GROUP_PROPERTY_VALUE) || '';
+}
+
+export const setLocalGroupPropertyValue = (value) => {
+    setLocalStorage(LOCALSTORAGE_GROUP_PROPERTY_VALUE, value);
+}
